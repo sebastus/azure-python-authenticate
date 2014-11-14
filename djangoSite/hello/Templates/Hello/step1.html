@@ -1,0 +1,15 @@
+<html>
+<body>
+	<h1> Click below to start </h1>
+	Url: {{url}} <br>
+	Status code: {{status_code}} <br>
+	History: {{history}} <br>
+	AAD Code: {{aad_code}} <br>
+	Subscriptions: {{subscriptions}} <br>
+	RequestHeaders: {{requestheaders}} <br>
+	<form action='/hello/' method='POST'>
+		{% csrf_token %}
+		<input name='LogInButton' type='submit' value='Log In'/>
+	</form>
+</body>
+</html>
