@@ -1,0 +1,16 @@
+<html>
+<body>
+	<h1> Multi-Tenant Azure AD REST AuthN Process </h1>
+	One of the key features of Azure AD is the simplicity of giving members of one tenant the rights to access the applications of another tenant.  So, for example, a software company (Tenant A) can easily grant rights to its customer (Tenant B) to use one or more of its apps, as a guest.  This is a classic example of multi-tenancy.  But!  According to the authentication steps outlined in this <a href="http://www.cloudidentity.com/blog/2014/10/09/the-use-of-azure-ad-behind-deploy-to-azure/">blog</a> , the user's credentials are collected via a UI that is owned by Azure AD.  You can't accept the credentials in your code and parse to determine which tenant is being accessed.  Answer: the Common endpoint, as detailed in <a href="http://www.cloudidentity.com/blog/2014/08/26/the-common-endpoint-walks-like-a-tenant-talks-like-a-tenant-but-is-not-a-tenant/">Vittorio Bertocci's blog.</a> <br> <br>
+	
+	In this example, use an ID of the form <em>user@tenant.onmicrosoft.com</em>.  To get started, a POST to <em>https://login.windows.net/common/oauth2/authorize</em> is performed.  This redirects the user to the credentials UI and returns to the supplied Redirect_URI. <br> <br>
+		
+	<form action='/aadrest/' method='POST'>
+		{% csrf_token %}
+		<input name='LogInButton' type='submit' value='Log In'/>
+	</form>
+	
+	<br><br>
+	{{output}}
+</body>
+</html>

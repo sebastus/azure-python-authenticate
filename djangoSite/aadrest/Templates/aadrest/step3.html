@@ -1,0 +1,16 @@
+<html>
+<body>
+	<h1> Multi-Tenant Azure AD REST AuthN Process </h1>
+	<h2> Step 3 </h2>
+	
+	Here's the access token that was returned in Step 2: <br><br>
+	{{token}} <br><br>
+	
+	In this step, we'll use it to acquire a list of subscriptions that this ID has access to. This list is returned by the <a href="http://msdn.microsoft.com/en-us/library/azure/dn775050.aspx">List Azure Subscriptions</a> API.  <br><br>
+		
+	<form action='/aadrest/step3/' method='POST'>
+		{% csrf_token %}
+		<input name='NextStep' type='submit' value='Next Step -->'/>
+	</form>
+</body>
+</html>

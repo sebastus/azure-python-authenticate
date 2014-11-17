@@ -1,0 +1,16 @@
+<html>
+<body>
+	<h1> Multi-Tenant Azure AD REST AuthN Process </h1>
+	<h2> Step 2 </h2>
+	
+	Here's the code returned in the previous step: <br><br>
+	{{aad_code}} <br><br>
+	
+	In this step, we'll use it to acquire an access token with rights to execute methods in the Azure Service Management API. This access token comes from Azure AD by issuing a request to the token endpoint: <em>https://login.windows.net/common/oauth2/token.</em> <br><br>
+		
+	<form action='/aadrest/step2/' method='POST'>
+		{% csrf_token %}
+		<input name='NextStep' type='submit' value='Next Step -->'/>
+	</form>
+</body>
+</html>
