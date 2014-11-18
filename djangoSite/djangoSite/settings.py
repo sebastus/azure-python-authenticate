@@ -64,6 +64,24 @@ DATABASES = {
     }
 }
 
+# my constants
+CONSTANTS = {
+	'CLIENT_ID': '54da33ea-bd9b-4391-9863-33af3f005b53',
+	'CLIENT_KEY': 'gvky5/Jf2Ig4SCa472Gt0z82KWE6Bl9s+nH2BOYPlW8=',
+	'STEP_1_TEMPLATE_NAME': 'aadrest/step1.html',
+	'STEP_2_TEMPLATE_NAME': 'aadrest/step2.html',
+	'STEP_3_TEMPLATE_NAME': 'aadrest/step3.html',
+	'STEP_4_TEMPLATE_NAME': 'aadrest/step4.html',
+	'STEP_5_TEMPLATE_NAME': 'aadrest/step5.html',
+	'REDIRECT_URI': 'http://localhost:8000/aadrest/step2/',
+	'AUTHORIZATION_BASE_URL': 'https://login.windows.net/%s/oauth2/authorize',
+	'BASE_TOKEN_URL': 'https://login.windows.net/%s/oauth2/token',
+	'RESOURCE_URI': 'https://management.core.windows.net/',
+	'GET_SUBSCRIPTIONS_URL': 'https://management.core.windows.net/subscriptions',
+	'MS_API_VERSION_HEADER': 'x-ms-version',
+	'MS_API_VERSION_HEADER_VALUE': '2013-08-01'
+}
+	
 # Internationalization
 # https://docs.djangoproject.com/en/1.7/topics/i18n/
 

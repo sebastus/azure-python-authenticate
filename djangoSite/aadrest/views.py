@@ -2,6 +2,7 @@ from xml.dom.minidom import parseString
 from django.shortcuts import render, redirect
 import requests
 from requests_oauthlib import OAuth2Session
+from django.conf import settings
 
 def getText(nodelist):
     rc = []
@@ -12,11 +13,13 @@ def getText(nodelist):
 
 def index(request):
 
+	
 	# initialization
-	client_id = '54da33ea-bd9b-4391-9863-33af3f005b53'
-	template_name = 'aadrest/step1.html'
-	redirect_uri = 'http://localhost:8000/aadrest/step2/'
-	authorization_base_url = 'https://login.windows.net/common/oauth2/authorize'
+	constants = settings.CONSTANTS
+	CLIENT_ID = constants['CLIENT_ID']
+	STEP_1_TEMPLATE_NAME = constants['STEP_1_TEMPLATE_NAME']
+	REDIRECT_URI = constants['REDIRECT_URI']
+	AUTHORIZATION_BASE_URL = constants['AUTHORIZATION_BASE_URL']
 	
 	context = {'initialize':''}
 	
@@ -24,16 +27,16 @@ def index(request):
 	if request.method == 'GET':
 		
 		# initial invocation, just render
-		return render(request, template_name, context)
+		return render(request, STEP_1_TEMPLATE_NAME, context)
 		
 	# OAUTH STEP 1 - POST as a result of clicking the LogIn submit button	
 	elif request.method == 'POST':
 
 		# create a 'requests' Oauth2Session
-		azure_session = OAuth2Session(client_id, redirect_uri=redirect_uri)
+		azure_session = OAuth2Session(CLIENT_ID, redirect_uri=REDIRECT_URI)
 
 		# do the outreach to https://login.windows.net/common/oauth2/authorize
-		authorization_url, state = azure_session.authorization_url(authorization_base_url)
+		authorization_url, state = azure_session.authorization_url(AUTHORIZATION_BASE_URL % 'common')
 		resp = requests.get(authorization_url)		
 		
 		# go to the login page of AAD & authenticate
@@ -42,16 +45,17 @@ def index(request):
 def step2(request):
 
 	# initialization
-	template_name = 'aadrest/step2.html'
-	template_name_next_page = 'aadrest/step3.html'
-	token_url = 'https://login.windows.net/common/oauth2/token'
-	redirect_uri = 'http://localhost:8000/aadrest/step2/'
-	client_id = '54da33ea-bd9b-4391-9863-33af3f005b53'
-	client_key = 'gvky5/Jf2Ig4SCa472Gt0z82KWE6Bl9s+nH2BOYPlW8='
-	resource_uri = 'https://management.core.windows.net/'
+	constants = settings.CONSTANTS
+	STEP_2_TEMPLATE_NAME = constants['STEP_2_TEMPLATE_NAME']
+	STEP_3_TEMPLATE_NAME = constants['STEP_3_TEMPLATE_NAME']
+	BASE_TOKEN_URL = constants['BASE_TOKEN_URL']
+	REDIRECT_URI = constants['REDIRECT_URI']
+	CLIENT_ID = constants['CLIENT_ID']
+	CLIENT_KEY = constants['CLIENT_KEY']
+	RESOURCE_URI = constants['RESOURCE_URI']
 	
 	context = {'initialize':''}
-	azure_session = OAuth2Session(client_id, redirect_uri=redirect_uri)
+	azure_session = OAuth2Session(CLIENT_ID, redirect_uri=REDIRECT_URI)
 	
 	if request.method == 'GET':
 	
@@ -62,7 +66,7 @@ def step2(request):
 		# display the code
 		context['aad_code'] = aad_code
 		
-		return render(request, template_name, context)
+		return render(request, STEP_2_TEMPLATE_NAME, context)
 		
 	elif request.method == 'POST':
 	
@@ -70,7 +74,7 @@ def step2(request):
 		aad_code = request.session['aad_code']
 
 		# OAUTH STEP 2 - go fetch the token
-		token_dict = azure_session.fetch_token(token_url, code=aad_code, client_secret=client_key, resource=resource_uri)
+		token_dict = azure_session.fetch_token(BASE_TOKEN_URL % 'common', code=aad_code, client_secret=CLIENT_KEY, resource=RESOURCE_URI)
 		
 		# pass the token to the next step on session
 		request.session['token'] = token_dict
@@ -78,32 +82,33 @@ def step2(request):
 		# display the token
 		context['token'] = token_dict
 		
-		return render(request, template_name_next_page, context)
+		return render(request, STEP_3_TEMPLATE_NAME, context)
 		
 def step3(request):
 
 	# initialization
-	template_name = 'aadrest/step3.html'
-	template_name_next_page = 'aadrest/step4.html'
-	client_id = '54da33ea-bd9b-4391-9863-33af3f005b53'
-	redirect_uri = 'http://localhost:8000/aadrest/step2/'
-	get_subscriptions_url = 'https://management.core.windows.net/subscriptions'
-	ms_api_version_header = 'x-ms-version'
-	ms_api_version_header_value = '2013-08-01'
+	constants = settings.CONSTANTS
+	STEP_3_TEMPLATE_NAME = constants['STEP_3_TEMPLATE_NAME']
+	STEP_4_TEMPLATE_NAME = constants['STEP_4_TEMPLATE_NAME']
+	CLIENT_ID = constants['CLIENT_ID']
+	REDIRECT_URI = constants['REDIRECT_URI']
+	GET_SUBSCRIPTIONS_URL = constants['GET_SUBSCRIPTIONS_URL']
+	MS_API_VERSION_HEADER = constants['MS_API_VERSION_HEADER']
+	MS_API_VERSION_HEADER_VALUE = constants['MS_API_VERSION_HEADER_VALUE']
 
 	context = {'initialize':''}
 	
 	if request.method == 'GET':
-		return render(request, template_name, context)
+		return render(request, STEP_3_TEMPLATE_NAME, context)
 		
 	elif request.method == 'POST':
 
 		# create a requests session with the token we got previously
 		token = request.session['token']
-		azure_session = OAuth2Session(client_id, redirect_uri = redirect_uri, token=token)
+		azure_session = OAuth2Session(CLIENT_ID, redirect_uri = REDIRECT_URI, token=token)
 		
 		# OAUTH STEP 3 - go get the subscriptions
-		resp = azure_session.get(get_subscriptions_url, headers = {ms_api_version_header: ms_api_version_header_value})
+		resp = azure_session.get(GET_SUBSCRIPTIONS_URL, headers = {MS_API_VERSION_HEADER: MS_API_VERSION_HEADER_VALUE})
 		
 		# extract the juice
 		dom = parseString(resp.content)
@@ -124,21 +129,24 @@ def step3(request):
 		# store the tenant id in session
 		request.session['tenantid'] = tenantText
 
-		return render(request, template_name_next_page, context)
+		return render(request, STEP_4_TEMPLATE_NAME, context)
 
 def step4(request):
-	template_name = 'aadrest/step4.html'
-	template_name_next_page = 'aadrest/step5.html'
-	redirect_uri = 'http://localhost:8000/aadrest/step2/'
-	token_base_url = 'https://login.windows.net/%s/oauth2/token'
-	client_id = '54da33ea-bd9b-4391-9863-33af3f005b53'
-	client_key = 'gvky5/Jf2Ig4SCa472Gt0z82KWE6Bl9s+nH2BOYPlW8='
-	resource_uri = 'https://management.core.windows.net/'
+
+	# initialization
+	constants = settings.CONSTANTS
+	STEP_4_TEMPLATE_NAME = constants['STEP_4_TEMPLATE_NAME']
+	STEP_5_TEMPLATE_NAME = constants['STEP_5_TEMPLATE_NAME']
+	REDIRECT_URI = constants['REDIRECT_URI']
+	BASE_TOKEN_URL = constants['BASE_TOKEN_URL']
+	CLIENT_ID = constants['CLIENT_ID']
+	CLIENT_KEY = constants['CLIENT_KEY']
+	RESOURCE_URI = constants['RESOURCE_URI']
 
 	context = {'initialize':''}
 
 	if request.method == 'GET':
-		return render(request, template_name, context)
+		return render(request, STEP_4_TEMPLATE_NAME, context)
 
 	# OAUTH STEP 1 - POST as a result of clicking the LogIn submit button	
 	elif request.method == 'POST':
@@ -147,17 +155,14 @@ def step4(request):
 		tenantid = request.session['tenantid']
 		aad_code = request.session['aad_code']
 		
-		# construct the token url
-		token_url = token_base_url % tenantid
-		
 		# create a 'requests' Oauth2Session
-		azure_session = OAuth2Session(client_id, redirect_uri=redirect_uri)
+		azure_session = OAuth2Session(CLIENT_ID, redirect_uri=REDIRECT_URI)
 
 		# OAUTH STEP 4 - go fetch the token for the tenant as opposed to Common
-		token_dict = azure_session.fetch_token(token_url, code=aad_code, client_secret=client_key, resource=resource_uri)
+		token_dict = azure_session.fetch_token(BASE_TOKEN_URL % tenantid, code=aad_code, client_secret=CLIENT_KEY, resource=RESOURCE_URI)
 		
 		# put the token into context for display
 		context['token'] = token_dict
 		
 		# present results
-		return render(request, template_name_next_page, context) 
+		return render(request, STEP_5_TEMPLATE_NAME, context) 
