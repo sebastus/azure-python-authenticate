@@ -7,5 +7,9 @@
 	
 	{{subscriptions}} <br><br>
 	
+	<form action='/aadrest/step4/' method='POST'>
+		{% csrf_token %}
+		<input name='NextStep' type='submit' value='Next Step -->'/>
+	</form>
 </body>
 </html>

@@ -120,13 +120,20 @@ def step3(request):
 
 		# stick them in context & display
 		context['subscriptions'] = output
+		
+		# store the tenant id in session
+		request.session['tenantid'] = tenantText
 
 		return render(request, template_name_next_page, context)
 
 def step4(request):
 	template_name = 'aadrest/step4.html'
+	template_name_next_page = 'aadrest/step5.html'
 	redirect_uri = 'http://localhost:8000/aadrest/step2/'
-	authorization_base_url = 'https://login.windows.net/{x}/oauth2/authorize'
+	token_base_url = 'https://login.windows.net/%s/oauth2/token'
+	client_id = '54da33ea-bd9b-4391-9863-33af3f005b53'
+	client_key = 'gvky5/Jf2Ig4SCa472Gt0z82KWE6Bl9s+nH2BOYPlW8='
+	resource_uri = 'https://management.core.windows.net/'
 
 	context = {'initialize':''}
 
@@ -136,12 +143,21 @@ def step4(request):
 	# OAUTH STEP 1 - POST as a result of clicking the LogIn submit button	
 	elif request.method == 'POST':
 
+		# get the tenant id and AAD code
+		tenantid = request.session['tenantid']
+		aad_code = request.session['aad_code']
+		
+		# construct the token url
+		token_url = token_base_url % tenantid
+		
 		# create a 'requests' Oauth2Session
 		azure_session = OAuth2Session(client_id, redirect_uri=redirect_uri)
 
-		# do the outreach to https://login.windows.net/common/oauth2/authorize
-		authorization_url, state = azure_session.authorization_url(authorization_base_url)
-		resp = requests.get(authorization_url)		
+		# OAUTH STEP 4 - go fetch the token for the tenant as opposed to Common
+		token_dict = azure_session.fetch_token(token_url, code=aad_code, client_secret=client_key, resource=resource_uri)
 		
-		# go to the login page of AAD & authenticate
-		return redirect(resp.url)
+		# put the token into context for display
+		context['token'] = token_dict
+		
+		# present results
+		return render(request, template_name_next_page, context) 
