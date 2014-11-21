@@ -114,6 +114,7 @@ def step3(request):
 		dom = parseString(resp.content)
 		subscriptions = dom.getElementsByTagName("Subscription")
 		output = []
+		tenantText = 'No subscriptions found in list.'
 		for subscription in subscriptions:
 			name = subscription.getElementsByTagName("SubscriptionName")[0]
 			nameText = getText(name.childNodes)
