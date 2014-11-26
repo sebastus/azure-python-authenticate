@@ -44,6 +44,6 @@ To run the sample:
 
 5.  After authenticating, the app will display certain progress information as you click through the buttons on the pages.
 
-If you've been critically thinking as you go through this, you have noticed that everything is taking place in the context of a single AAD tenancy.  Since the purpose of the sample is to demonstrate a multi-tenant solution, maybe this strikes you as a little bit bogus.  It is.  
+It is possible to run this demo with a single Azure AD tenant, if you don't happen to have access to two.  There are no code changes. 
 
-A planned next step is to test the technique with >=2 tenants.  Shortly thereafter, test the technique with a live ID rather than an organizational ID.
+Shortly thereafter, test the technique with a live ID rather than an organizational ID.
