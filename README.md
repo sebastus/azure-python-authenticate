@@ -38,12 +38,13 @@ To run the sample:
 	
 2.  Open a web browser.  Navigate to: http://localhost:8000/aadrest
 
-3.  When you click the button on the first page, it will redirect you to the AAD login page.  Enter credentials from your AAD tenant.  For example: user@tenantb.onmicrosoft.com.   (aka an organizational ID) (NOTE: TenantB user)
+3.	There are two pathways - Organizational Account or Microsoft Account.  Pick one.  Just follow the instructions on screen for each one.
 
-4.	(FYI) As part of the process, Azure AD will present a permission request - asking if it's ok that the app from TenantA be listed in the apps list of TenantB.  Click OK.
+4.  When you click the button on the Step1 page, it will redirect you to the correct login page.  Enter appropriate credentials.
 
-5.  After authenticating, the app will display certain progress information as you click through the buttons on the pages.
+5.	(FYI) As part of the process, on the Azure AD pathway, Azure AD will present a permission request - asking if it's ok that the app from TenantA be listed in the apps list of TenantB.  Click OK.
+
+6.  After authenticating, the app will display certain progress information as you click through the buttons on the pages.
 
 It is possible to run this demo with a single Azure AD tenant, if you don't happen to have access to two.  There are no code changes. 
 
-Shortly thereafter, test the technique with a live ID rather than an organizational ID.
