@@ -36,6 +36,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+	'oauth',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -61,6 +62,21 @@ DATABASES = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
+}
+
+# my constants
+CONSTANTS = {
+	'CLIENT_ID': 'my app client id from azure ad',
+	'CLIENT_KEY': 'my app client key from azure ad',
+	'STEP_1_TEMPLATE_NAME': 'oauth/step1.html',
+	'STEP_2_TEMPLATE_NAME': 'oauth/step2.html',
+	'REDIRECT_URI': 'http://localhost:8000/oauth/step2/',
+	'AUTHORIZATION_BASE_URL': 'https://login.windows.net/%s/oauth2/authorize',
+	'BASE_TOKEN_URL': 'https://login.windows.net/%s/oauth2/token',
+	'RESOURCE_URI': 'https://management.core.windows.net/',
+	'GET_SUBSCRIPTIONS_URL': 'https://management.core.windows.net/subscriptions',
+	'MS_API_VERSION_HEADER': 'x-ms-version',
+	'MS_API_VERSION_HEADER_VALUE': '2013-08-01'
 }
 
 # Internationalization
